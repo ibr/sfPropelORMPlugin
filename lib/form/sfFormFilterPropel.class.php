@@ -224,8 +224,27 @@ abstract class sfFormFilterPropel extends sfFormFilter
   {
     $colname = $this->getColname($field);
 
-    if (is_array($value))
+    //T::log(__METHOD__.print_r($value, true));
+    if (is_array($value) && isset($value['is_empty']) && $value['is_empty'])
     {
+        //T::log('empty');
+        //$criteria->add($colname, null, Criteria::ISNULL);
+        $criterion = $criteria->getNewCriterion($colname, '');
+        $criterion->addOr($criteria->getNewCriterion($colname, null, Criteria::ISNULL));
+        $criteria->add($criterion);
+    }
+        //Bug bei addOr, deswegen elseif statt if, gleichzeitige Anzeige GS und Haupthaus nicht mgl!!
+    elseif (is_array($value) && isset($value['id']))
+    {
+        if ($value['id']) {
+            $criterion = $criteria->getNewCriterion($colname, '');
+            $criterion->addOr($criteria->getNewCriterion($colname, $value['id']));
+            $criteria->add($criterion);
+        }
+    }
+    elseif (is_array($value))
+    {
+      //T::log('array');
       $values = $value;
       $value = array_pop($values);
       $criterion = $criteria->getNewCriterion($colname, $value);
@@ -239,6 +258,7 @@ abstract class sfFormFilterPropel extends sfFormFilter
     }
     else
     {
+      //T::log('plain');
       $criteria->add($colname, $value);
     }
   }
@@ -255,11 +275,11 @@ abstract class sfFormFilterPropel extends sfFormFilter
     }
     else if (is_array($values) && isset($values['text']) && '' != $values['text'])
     {
-      $criteria->add($colname, '%'.$values['text'].'%', Criteria::LIKE);
+      $criteria->add($colname, str_replace('*', '%', $values['text'].'%'), Criteria::LIKE);
     }
     else if (is_scalar($values) && '' != $values)
     {
-      $criteria->add($colname, '%'.$values.'%', Criteria::LIKE);
+      $criteria->add($colname, str_replace('*', '%', $values.'%'), Criteria::LIKE);
     }
   }
 

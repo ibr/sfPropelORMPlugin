@@ -81,6 +81,7 @@ class sfFormPropelCollection extends sfForm
       foreach ($this->getOption('remove_fields') as $field)
       {
         unset($form[$field]);
+        //T::log("$form [$field]");
       }
       if ($this->getOption('add_delete'))
       {

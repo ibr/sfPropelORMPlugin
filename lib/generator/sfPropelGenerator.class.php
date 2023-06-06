@@ -198,11 +198,9 @@ class sfPropelGenerator extends sfModelGenerator
    */
   public function renderField($field)
   {
-    if ($field->isLink() && ($module = $field->getConfig('link_module', false, false)))
+    if ($module = $field->getConfig('link_to', false, false))
     {
-      $field->setLink(false);
       $html = parent::renderField($field);
-      $field->setLink(true);
       $html = sprintf("link_to(%s, '%s', %s)", $html, $module . '_edit', $html);
       return $html;
     }
@@ -254,10 +252,15 @@ class sfPropelGenerator extends sfModelGenerator
     {
       return 'ForeignKey';
     }
-
+    //Feldnamen in Kleinbuchstaben
+    if (substr($column->getName(), 0, 3) === 'is_')
+    {
+        return 'Boolean';
+    }
     switch ($column->getType())
     {
       case PropelColumnTypes::BOOLEAN:
+      case PropelColumnTypes::TINYINT:
       case PropelColumnTypes::BOOLEAN_EMU:
         return 'Boolean';
       case PropelColumnTypes::DATE:

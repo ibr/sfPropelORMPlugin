@@ -99,6 +99,7 @@ class sfWidgetFormPropelChoice extends sfWidgetFormChoice
     if ($order = $this->getOption('order_by'))
     {
       $criteria->orderBy($order[0], $order[1]);
+      if (isset($order[2])) $criteria->orderBy($order[2], $order[3]);
     }
     $objects = $criteria->find($this->getOption('connection'));
 

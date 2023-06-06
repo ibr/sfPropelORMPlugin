@@ -283,16 +283,21 @@ class sfPropelFormGenerator extends sfGenerator
    */
   public function getWidgetClassForColumn(ColumnMap $column)
   {
+    //echo $column->getType();
     switch ($column->getType())
     {
       case PropelColumnTypes::BOOLEAN:
+      case PropelColumnTypes::TINYINT:
       case PropelColumnTypes::BOOLEAN_EMU:
-        $name = 'InputCheckbox';
+        $name = 'SelectBoolean';
         break;
       case PropelColumnTypes::CLOB:
       case PropelColumnTypes::CLOB_EMU:
       case PropelColumnTypes::LONGVARCHAR:
         $name = 'Textarea';
+        break;
+      case PropelColumnTypes::DECIMAL:
+        $name = 'InputDecimal';
         break;
       case PropelColumnTypes::DATE:
         $name = 'Date';
@@ -309,14 +314,33 @@ class sfPropelFormGenerator extends sfGenerator
       default:
         $name = 'InputText';
     }
-
+    switch ($column->getName())
+    {
+        case 'bearbeiter':
+            $name = 'PlainBearbeiter';
+            break;
+        case 'bearbdatum':
+              $name = 'PlainDate';
+              break;
+        case 'loeschdatum':
+              $name = 'InputHidden';
+              break;
+    }
     if ($column->isPrimaryKey())
     {
       $name = 'InputHidden';
     }
     else if ($column->isForeignKey())
     {
-      $name = 'PropelChoice';
+      switch ($column->getName())
+      {
+          case 'aufn_nr':
+              $name = 'TeilnehmerAutocompleter';
+              break;
+          default:
+              $name = 'PropelChoice';
+              //echo $column->getName();
+      }
     }
 
     return sprintf('sfWidgetForm%s', $name);
@@ -351,6 +375,19 @@ class sfPropelFormGenerator extends sfGenerator
 
       $options[] = sprintf("'choices' => %s", preg_replace('/[\n\r]+/', '', var_export($choices, true)));
     }
+
+    switch ($column->getType())
+      {
+        case PropelColumnTypes::CHAR:
+        case PropelColumnTypes::VARCHAR:
+          if ($column->getSize())
+          {
+            //Feldbreite dynamisch, maximal 100
+            //ist eigentlich Attribut
+            $options[] = sprintf('\'size\' => %s', min(100, $column->getSize()));
+          }
+          break;
+      }
 
     return count($options) ? sprintf('array(%s)', implode(', ', $options)) : '';
   }

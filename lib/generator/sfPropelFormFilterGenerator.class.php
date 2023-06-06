@@ -148,6 +148,19 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
       $name = 'PropelChoice';
     }
 
+    switch ($column->getName())
+    {
+      case 'massnahmekategorie_id':
+        $name = 'FilterPropelChoice';
+        break;
+      case 'aufn_nr':
+        $name = 'TeilnehmerAutocompleter';
+        break;
+      default:
+        //echo $column->getName();
+    }
+
+    if (strtolower(substr($column->getName(), 0, 3)) == 'is_') $name = 'Choice';
     return sprintf('sfWidgetForm%s', $name);
   }
 
@@ -167,7 +180,7 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
     {
       case PropelColumnTypes::BOOLEAN:
       case PropelColumnTypes::BOOLEAN_EMU:
-        $options[] = "'choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no')";
+        $options[] = "'choices' => array('' => '', 1 => 'ja', 0 => 'nein')";
         break;
       case PropelColumnTypes::DATE:
       case PropelColumnTypes::TIME:
@@ -184,7 +197,11 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
       default:
         $options = array_merge($options, $withEmpty);
     }
-
+    if (strtolower(substr($column->getName(), 0, 3)) == 'is_')
+    {
+        $options = array(); //ohne $withEmpty!
+        $options[] = "'choices' => array('' => '', 1 => 'ja', 0 => 'nein')";
+    }
     if ($column->isForeignKey())
     {
       $options[] = sprintf('\'model\' => \'%s\', \'add_empty\' => true', $this->getForeignTable($column)->getClassname());
@@ -236,6 +253,7 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
       default:
         $name = 'Pass';
     }
+    if (strtolower(substr($column->getName(), 0, 3)) == 'is_') $name = 'Choice';
 
     if ($column->isPrimaryKey() || $column->isForeignKey())
     {
@@ -263,6 +281,10 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
     else if ($column->isPrimaryKey())
     {
       $options[] = sprintf('\'model\' => \'%s\', \'column\' => \'%s\'', $column->getTable()->getClassname(), $this->translateColumnName($column));
+    }
+    else if (strtolower(substr($column->getName(), 0, 3)) == 'is_')
+    {
+        $options[] = "'choices' => array('', 1, 0)";
     }
     else
     {
@@ -304,7 +326,10 @@ class sfPropelFormFilterGenerator extends sfPropelFormGenerator
     {
       return 'ForeignKey';
     }
-
+    if (strtolower(substr($column->getName(), 0, 3)) == 'is_')
+    {
+      return 'Boolean';
+    }
     switch ($column->getType())
     {
       case PropelColumnTypes::BOOLEAN:

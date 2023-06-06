@@ -53,9 +53,13 @@ class sfValidatorPropelChoice extends sfValidatorBase
 
   /**
    * @see sfValidatorBase
+   * angepasst fuer Geschaftstelle
+   * Array ( [id] => [is_empty] => on )
    */
   protected function doClean($value)
   {
+    if (is_array($value) && isset($value['id'])) return $value;
+
     $criteria = PropelQuery::from($this->getOption('model'));
     if ($this->getOption('criteria'))
     {

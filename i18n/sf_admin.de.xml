@@ -26,8 +26,8 @@
         <target>Speichern</target>
       </trans-unit>
       <trans-unit>
-        <source>Save and add</source>
-        <target>Speichern und hinzufügen</target>
+        <source>Save And Add</source>
+        <target>Sp. und hinzufügen</target>
       </trans-unit>
       <trans-unit>
         <source>Cancel</source>
@@ -80,6 +80,10 @@
       <trans-unit>
         <source>[0] no result|[1] 1 result|(1,+Inf] %1% results</source>
         <target>[0] kein Ergebnis|[1] 1 Ergebnis|(1,+Inf] %1% Ergebnisse</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Are you sure?</source>
+        <target>Wirklich löschen?</target>
       </trans-unit>
 
       <!-- Pagination -->

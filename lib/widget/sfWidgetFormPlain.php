@@ -26,6 +26,7 @@ class sfWidgetFormPlain extends sfWidgetForm
   protected function configure($options = array(), $attributes = array())
   {
     $this->addOption('tag', 'div');
+    $this->addOption('class', 'plain');
   }
 
   /**
@@ -40,6 +41,6 @@ class sfWidgetFormPlain extends sfWidgetForm
    */
   public function render($name, $value = null, $attributes = array(), $errors = array())
   {
-    return $this->renderContentTag($this->getOption('tag'), self::escapeOnce($value), $attributes);
+    return $this->renderContentTag($this->getOption('tag'), self::escapeOnce($value), array('class' => $this->getOption('class')));
   }
 }
